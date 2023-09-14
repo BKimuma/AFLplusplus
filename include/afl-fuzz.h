@@ -1,4 +1,3 @@
-
 /*
    american fuzzy lop++ - fuzzer header
    ------------------------------------
@@ -158,6 +157,7 @@ struct queue_entry {
 
   u8 colorized,                         /* Do not run redqueen stage again  */
       cal_failed;                       /* Calibration failed?              */
+
   bool trim_done,                       /* Trimmed?                         */
       was_fuzzed,                       /* historical, but needed for MOpt  */
       passed_det,                       /* Deterministic stages passed?     */
@@ -169,17 +169,15 @@ struct queue_entry {
       disabled;                         /* Is disabled from fuzz selection  */
 
   u32 bitmap_size,                      /* Number of bits set in bitmap     */
-      fuzz_level,                       /* Number of fuzzing iterations     */
-      n_fuzz_entry                      /* offset in n_fuzz                 */
 #ifdef INTROSPECTION
-      ,
       stats_selected,                   /* stats: how often selected        */
       stats_skipped,                    /* stats: how often skipped         */
       stats_finds,                      /* stats: # of saved finds          */
       stats_crashes,                    /* stats: # of saved crashes        */
-      stats_tmouts                      /* stats: # of saved timeouts       */
+      stats_tmouts,                     /* stats: # of saved timeouts       */
 #endif
-      ;
+      fuzz_level,                       /* Number of fuzzing iterations     */
+      n_fuzz_entry;                     /* offset in n_fuzz                 */
 
   u64 exec_us,                          /* Execution time (us)              */
       handicap,                         /* Number of queue cycles behind    */
@@ -402,7 +400,8 @@ typedef struct afl_env_vars {
       afl_exit_on_seed_issues, afl_try_affinity, afl_ignore_problems,
       afl_keep_timeouts, afl_no_crash_readme, afl_ignore_timeouts,
       afl_no_startup_calibration, afl_no_warn_instability,
-      afl_post_process_keep_original, afl_crashing_seeds_as_new_crash;
+      afl_post_process_keep_original, afl_crashing_seeds_as_new_crash,
+      afl_final_sync, afl_ignore_seed_problems;
 
   u8 *afl_tmpdir, *afl_custom_mutator_library, *afl_python_module, *afl_path,
       *afl_hang_tmout, *afl_forksrv_init_tmout, *afl_preload,
@@ -611,6 +610,7 @@ typedef struct afl_state {
 
   u32 stage_cur, stage_max;             /* Stage progression                */
   s32 splicing_with;                    /* Splicing with which test case?   */
+  s64 smallest_favored;                 /* smallest queue id favored        */
 
   u32 main_node_id, main_node_max;      /*   Main instance job splitting    */
 
